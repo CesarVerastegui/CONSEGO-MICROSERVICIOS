@@ -1,0 +1,236 @@
+version: '3.8'
+
+# ==============================================================================
+# Orquestación de Microservicios CONSEGO con Docker Compose (5 Microservicios)
+# ==============================================================================
+
+networks:
+  consego-network:
+    driver: bridge
+    name: consego-network
+
+volumes:
+  mysql_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  mongodb_data:
+    driver: local
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Base de Datos Relacional: MySQL 8.0
+  # ----------------------------------------------------------------------------
+  db:
+    image: mysql:8.0
+    container_name: consego-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: authdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - consego-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ----------------------------------------------------------------------------
+  # 2. Broker de Mensajería: RabbitMQ con Management Console
+  # ----------------------------------------------------------------------------
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: consego-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"     # Protocolo AMQP para microservicios
+      - "15672:15672"   # Consola de Administración Web (guest / guest)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - consego-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------------------------
+  # 2.1. Base de Datos NoSQL: MongoDB (Persistencia Políglota para audit-service)
+  # ----------------------------------------------------------------------------
+  mongodb:
+    image: mongo:7.0
+    container_name: consego-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - consego-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+
+  # ----------------------------------------------------------------------------
+  # 3. Servidor de Descubrimiento: eureka-server (Microservicio 1/5)
+  # ----------------------------------------------------------------------------
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    restart: on-failure
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-server
+    networks:
+      - consego-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8761/eureka/apps || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+  # ----------------------------------------------------------------------------
+  # 4. Microservicio de Autenticación: auth-service (Microservicio 2/5)
+  # ----------------------------------------------------------------------------
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: on-failure
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/authdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - consego-network
+
+  # ----------------------------------------------------------------------------
+  # 5. Microservicio Core: solicitudes-service (Microservicio 3/5)
+  # ----------------------------------------------------------------------------
+  solicitudes-service:
+    build:
+      context: ./solicitudes-service
+      dockerfile: Dockerfile
+    container_name: solicitudes-service
+    restart: on-failure
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/appdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+      # Conexión asíncrona hacia RabbitMQ
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      # Conexión Eureka Service Discovery
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      # Fallback directo en caso de no usar Eureka
+      AUTH_SERVICE_URL: http://auth-service:8081
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      auth-service:
+        condition: service_started
+    networks:
+      - consego-network
+
+  # ----------------------------------------------------------------------------
+  # 6. Microservicio Consumidor: audit-service (Microservicio 4/5)
+  # ----------------------------------------------------------------------------
+  audit-service:
+    build:
+      context: ./audit-service
+      dockerfile: Dockerfile
+    container_name: audit-service
+    restart: on-failure
+    ports:
+      - "8083:8083"
+    environment:
+      # Conexión NoSQL MongoDB (Persistencia Políglota)
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/auditdb
+      SPRING_DATA_MONGODB_AUTO_INDEX_CREATION: "true"
+      # Conexión asíncrona consumidora desde RabbitMQ
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      # Conexión Eureka Service Discovery
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - consego-network
+
+  # ----------------------------------------------------------------------------
+  # 7. Puerta de Enlace Reactiva: api-gateway (Microservicio 5/5)
+  # ----------------------------------------------------------------------------
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      # Conexión Eureka Service Discovery para enrutamiento balanceado lb://
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      # Ruteo dinámico/estático con soporte lb:// por defecto
+      AUTH_SERVICE_URI: lb://auth-service
+      SOLICITUDES_SERVICE_URI: lb://solicitudes-service
+      AUDIT_SERVICE_URI: lb://audit-service
+    depends_on:
+      eureka-server:
+        condition: service_started
+      auth-service:
+        condition: service_started
+      solicitudes-service:
+        condition: service_started
+      audit-service:
+        condition: service_started
+    networks:
+      - consego-network

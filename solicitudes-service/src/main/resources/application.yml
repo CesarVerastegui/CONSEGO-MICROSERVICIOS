@@ -1,0 +1,71 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: solicitudes-service
+
+  # Base de datos (H2 por defecto local, sobreescribible con MySQL en Docker)
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:solicitudesdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  # Conexión RabbitMQ por defecto (localhost para local, rabbitmq en Docker)
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+  # Habilitar integración de Circuit Breaker en Spring Cloud OpenFeign
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
+# Configuración del Cliente Eureka (Service Discovery)
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+# URL base hacia auth-service (si se deja vacía, Feign resuelve vía Eureka)
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL:}
+
+# ==============================================================================
+# Configuración del Circuit Breaker con Resilience4J (Tema 5 del Sílabo)
+# ==============================================================================
+resilience4j:
+  circuitbreaker:
+    instances:
+      authServiceCB:
+        slidingWindowSize: 10                     # Evalúa las últimas 10 llamadas
+        failureRateThreshold: 50                  # Si el 50% falla, abre el circuito
+        waitDurationInOpenState: 10s              # Espera 10 segundos antes de intentar cerrar el circuito (Half-Open)
+        permittedNumberOfCallsInHalfOpenState: 3   # Permite 3 llamadas de prueba en estado Half-Open
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        registerHealthIndicator: true
+
+# ==============================================================================
+# Observabilidad y Monitoreo con Spring Boot Actuator (Tema 7 del Sílabo)
+# ==============================================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

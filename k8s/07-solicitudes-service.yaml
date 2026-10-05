@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solicitudes-service
+  namespace: consego
+  labels:
+    app: solicitudes-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: solicitudes-service
+  template:
+    metadata:
+      labels:
+        app: solicitudes-service
+    spec:
+      containers:
+        - name: solicitudes-service
+          image: consego/solicitudes-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+              name: http
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://db:3306/appdb?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "root"
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "update"
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq"
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: "guest"
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: "guest"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://eureka-server:8761/eureka/"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8082
+            initialDelaySeconds: 40
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "150m"
+            limits:
+              memory: "768Mi"
+              cpu: "600m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solicitudes-service
+  namespace: consego
+spec:
+  selector:
+    app: solicitudes-service
+  ports:
+    - port: 8082
+      targetPort: 8082
+      name: http
+  type: ClusterIP

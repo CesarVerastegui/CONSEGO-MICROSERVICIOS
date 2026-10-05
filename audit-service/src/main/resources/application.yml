@@ -1,0 +1,37 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: audit-service
+
+  # Base de Datos NoSQL Documental: MongoDB (Persistencia Políglota)
+  data:
+    mongodb:
+      uri: mongodb://${SPRING_DATA_MONGODB_HOST:localhost}:${SPRING_DATA_MONGODB_PORT:27017}/${SPRING_DATA_MONGODB_DATABASE:auditdb}
+      auto-index-creation: true
+
+  # Conexión RabbitMQ requerida
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+# Configuración del Cliente Eureka (Service Discovery)
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+# Observabilidad con Spring Boot Actuator (Tema 7 del Sílabo)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,200 @@
+<!-- Barra de Navegación Superior -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+  <div class="container-fluid px-4">
+    <span class="navbar-brand fw-bold d-flex align-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-shield-check me-2 text-primary" viewBox="0 0 16 16">
+        <path d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+        <path d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.599 4.491.71 7.781 2.348 9.923 1.638 2.14 3.606 3.032 4.148 3.238.542-.206 2.51-1.098 4.148-3.238 1.638-2.142 2.947-5.432 2.348-9.923A1.54 1.54 0 0 0 10.928 1.43c-.658-.215-1.777-.57-2.887-.87C9.843.265 8.69 0 8 0zm0 1.067c.53 0 1.552.223 2.662.524 1.082.295 2.186.643 2.837.855.48.156.772.58.74 1.077-.554 4.157-.726 7.19-2.253 9.188-1.562 2.046-3.48 2.92-3.986 3.125a.54.54 0 0 1-.39 0c-.506-.205-2.424-1.079-3.986-3.125-1.527-1.997-1.7-5.031-2.253-9.188a1.08 1.08 0 0 1 .74-1.077c.651-.212 1.755-.56 2.837-.855C6.448 1.29 7.47 1.067 8 1.067z"/>
+      </svg>
+      CONSEGO <span class="badge bg-secondary ms-2 small">Microservicios</span>
+    </span>
+
+    <div class="d-flex align-items-center gap-3">
+      @if (currentUser) {
+        <span class="text-light small">
+          Usuario: <strong>{{ currentUser.username }}</strong>
+          <span class="badge bg-primary ms-1">{{ currentUser.role }}</span>
+        </span>
+      }
+      <button (click)="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+        Cerrar Sesión
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenido Principal -->
+<div class="container py-4">
+
+  <!-- Mensajes de Notificación -->
+  @if (alertaMensaje) {
+    <div [class]="'alert alert-' + alertaTipo + ' alert-dismissible fade show border-0 rounded-3 shadow-sm mb-4'" role="alert">
+      <strong>{{ alertaTipo === 'success' ? 'Éxito: ' : 'Atención: ' }}</strong> {{ alertaMensaje }}
+      <button type="button" class="btn-close" (click)="alertaMensaje = null"></button>
+    </div>
+  }
+
+  <!-- Encabezado de Sección y Botón Crear -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">Gestión de Solicitudes de Acceso</h2>
+      <p class="text-muted small mb-0">Control centralizado mediante API Gateway y eventos de auditoría RabbitMQ</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button (click)="cargarSolicitudes()" class="btn btn-outline-secondary rounded-3 shadow-sm d-flex align-items-center gap-1">
+        <span>Refrescar</span>
+      </button>
+      <button (click)="abrirModalCrear()" class="btn btn-primary rounded-3 shadow-sm fw-semibold d-flex align-items-center gap-1">
+        <span>+ Nueva Solicitud</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla DataGrid de Solicitudes -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-secondary small text-uppercase fw-semibold">
+          <tr>
+            <th class="ps-4" style="width: 70px;">ID</th>
+            <th>Plataforma</th>
+            <th>Solicitante (ID)</th>
+            <th>Tipo Acceso</th>
+            <th>Motivo / Justificación</th>
+            <th>Fecha Registro</th>
+            <th>Estado</th>
+            <th class="text-end pe-4" style="width: 240px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading) {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                Cargando solicitudes desde el microservicio...
+              </td>
+            </tr>
+          } @else if (solicitudes.length === 0) {
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                No hay solicitudes de acceso registradas actualmente.
+              </td>
+            </tr>
+          } @else {
+            @for (s of solicitudes; track s.id) {
+              <tr>
+                <td class="ps-4 fw-bold text-muted">#{{ s.id }}</td>
+                <td class="fw-semibold text-dark">{{ s.plataforma }}</td>
+                <td>
+                  <span class="badge bg-light text-dark border">Usuario #{{ s.usuarioSolicitanteId }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">
+                    {{ s.tipoAcceso || 'LECTURA' }}
+                  </span>
+                </td>
+                <td class="text-muted small text-truncate" style="max-width: 220px;" [title]="s.motivo || s.justificacion || '-'">
+                  {{ s.motivo || s.justificacion || '-' }}
+                </td>
+                <td>
+                  <span class="small text-secondary">
+                    {{ (s.fechaCreacion || s.fechaSolicitud) ? ((s.fechaCreacion || s.fechaSolicitud) | date:'dd/MM/yyyy HH:mm') : '-' }}
+                  </span>
+                </td>
+                <td>
+                  @if (s.estado === 'APROBADA') {
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">APROBADA</span>
+                  } @else if (s.estado === 'RECHAZADA') {
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">RECHAZADA</span>
+                  } @else {
+                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">PENDIENTE</span>
+                  }
+                </td>
+                <td class="text-end pe-4">
+                  <!-- Operación PUT: Aprobar -->
+                  <button 
+                    (click)="cambiarEstado(s.id, 'APROBADA')" 
+                    class="btn btn-sm btn-outline-success rounded-pill me-1"
+                    title="Aprobar Solicitud">
+                    ✓
+                  </button>
+                  <!-- Operación PUT: Rechazar -->
+                  <button 
+                    (click)="cambiarEstado(s.id, 'RECHAZADA')" 
+                    class="btn btn-sm btn-outline-warning rounded-pill me-1"
+                    title="Rechazar Solicitud">
+                    ✕
+                  </button>
+                  <!-- Operación DELETE: Eliminar -->
+                  <button 
+                    (click)="eliminar(s.id)" 
+                    class="btn btn-sm btn-outline-danger rounded-pill"
+                    title="Eliminar Solicitud">
+                    🗑
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Crear Nueva Solicitud (Operación POST) -->
+@if (showCreateModal) {
+  <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">Crear Solicitud de Acceso</h5>
+          <button type="button" class="btn-close" (click)="cerrarModal()"></button>
+        </div>
+        <div class="modal-body pt-3">
+          <form (ngSubmit)="guardarSolicitud()">
+            
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary">Plataforma Objetivo</label>
+              <select class="form-select rounded-3" [(ngModel)]="nuevaSolicitud.plataforma" name="plataforma" required>
+                <option value="AWS Cloud">AWS Cloud</option>
+                <option value="GitHub Organization">GitHub Organization</option>
+                <option value="Azure Portal">Azure Portal</option>
+                <option value="Base de Datos Producción">Base de Datos Producción</option>
+                <option value="VMs On-Premise">VMs On-Premise</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary">ID Usuario Solicitante (auth-service)</label>
+              <div class="input-group">
+                <input type="number" class="form-control rounded-start-3" [(ngModel)]="nuevaSolicitud.usuarioSolicitanteId" name="usuarioSolicitanteId" required>
+                <span class="input-group-text bg-light small text-muted">Sesión: {{ currentUser?.username || 'admin' }} (ID: {{ currentUser?.id || 1 }})</span>
+              </div>
+              <div class="form-text small">Se valida en tiempo real vía OpenFeign con auth-service. Usuarios registrados: ID 1 (admin), ID 2 (operador), ID 3 (auditor).</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary">Tipo de Acceso</label>
+              <select class="form-select rounded-3" [(ngModel)]="nuevaSolicitud.tipoAcceso" name="tipoAcceso">
+                <option value="LECTURA">LECTURA</option>
+                <option value="ESCRITURA">ESCRITURA</option>
+                <option value="ADMIN">ADMIN</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-semibold text-secondary">Motivo / Justificación Técnica</label>
+              <textarea class="form-control rounded-3" rows="3" [(ngModel)]="nuevaSolicitud.motivo" name="motivo" placeholder="Indique el motivo técnico del requerimiento" required></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" (click)="cerrarModal()" class="btn btn-light rounded-3 px-3">Cancelar</button>
+              <button type="submit" class="btn btn-primary rounded-3 px-4 fw-semibold">Registrar Solicitud</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+}

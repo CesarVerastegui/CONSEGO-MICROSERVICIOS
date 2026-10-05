@@ -1,0 +1,75 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+      # Configuración de CORS a nivel global para la SPA de Angular
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+              - "http://127.0.0.1:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      # Ruteo dinámico hacia los microservicios mediante Eureka Load Balancer (lb://) o URI directa
+      routes:
+        # Ruta hacia auth-service
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URI:lb://auth-service}
+          predicates:
+            - Path=/api/auth/**
+
+        # Ruta hacia solicitudes-service
+        - id: solicitudes-service
+          uri: ${SOLICITUDES_SERVICE_URI:lb://solicitudes-service}
+          predicates:
+            - Path=/api/solicitudes/**
+
+        # Ruta hacia audit-service
+        - id: audit-service
+          uri: ${AUDIT_SERVICE_URI:lb://audit-service}
+          predicates:
+            - Path=/api/audit/**
+
+# Configuración del Cliente Eureka (Service Discovery)
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+# Clave secreta (Base64) sincronizada con auth-service para verificar tokens JWT
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+# Observabilidad con Spring Boot Actuator (Tema 7 del Sílabo)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+  endpoint:
+    health:
+      show-details: always
