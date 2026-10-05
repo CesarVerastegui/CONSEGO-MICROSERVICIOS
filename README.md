@@ -176,3 +176,4 @@ Los manifiestos declarativos para despliegue en clúster local (Minikube / Docke
 - **Rama `v1.0`:** Versión oficial y estable de la entrega final con arquitectura completa de microservicios, seguridad JWT, eventos AMQP y SPA en Angular.
 - **Directorio `legacy-dsw1/`:** Respaldo histórico del desarrollo inicial del proyecto en .NET C# para fines de trazabilidad académica.
 - **Directorio `docs/`:** Sílabo oficial, rúbrica de evaluación y especificación funcional del proyecto.
+- **📘 Manual de Despliegue y Guía de Demostración:** Consulta [`docs/GUIA_DESPLIEGUE_Y_PRUEBAS.md`](./docs/GUIA_DESPLIEGUE_Y_PRUEBAS.md) para el paso a paso detallado de configuración, guion de pruebas y exposición frente al docente.
