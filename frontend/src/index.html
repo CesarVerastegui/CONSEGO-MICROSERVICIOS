@@ -2,12 +2,82 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>CONSEGO - Control de Solicitudes de Acceso</title>
+  <title>CONSEGO - Gestión de Solicitudes de Acceso</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Google Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <!-- Tailwind CSS Engine & Custom IDM Technology System Palette -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0B132B",
+            "primary-midnight": "#0B132B",
+            "primary-container": "#1E3A8A",
+            "on-primary-container": "#90a8ff",
+            "secondary": "#00658D",
+            "secondary-container": "#3dbeff",
+            "accent-sky": "#38BDF8",
+            "accent-sky-dark": "#0284C7",
+            "surface-canvas": "#F8FAFC",
+            "surface-card": "#FFFFFF",
+            "surface-subtle": "#F1F5F9",
+            "surface-container": "#eaedff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-highest": "#dae2fd",
+            "border-default": "#E2E8F0",
+            "border-muted": "#CBD5E1",
+            "outline": "#757682",
+            "outline-variant": "#c5c5d3",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#444651",
+            "text-muted": "#475569",
+            "text-subtle": "#94A3B8",
+            "status-approved": "#10B981",
+            "status-approved-bg": "#ECFDF5",
+            "status-approved-border": "rgba(16, 185, 129, 0.3)",
+            "status-pending": "#F59E0B",
+            "status-pending-bg": "#FFFBEB",
+            "status-pending-border": "rgba(245, 158, 11, 0.3)",
+            "status-rejected": "#EF4444",
+            "status-rejected-bg": "#FEF2F2",
+            "status-rejected-border": "rgba(239, 68, 68, 0.3)",
+            "scope-info-bg": "#F0F9FF",
+            "scope-info-border": "rgba(2, 132, 199, 0.25)"
+          },
+          fontFamily: {
+            sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+            mono: ["'JetBrains Mono'", "monospace"],
+            "id-tabular": ["'JetBrains Mono'", "monospace"],
+            "badge-mono": ["'JetBrains Mono'", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body class="bg-surface-canvas text-on-surface min-h-screen antialiased">
   <app-root></app-root>
 </body>
 </html>

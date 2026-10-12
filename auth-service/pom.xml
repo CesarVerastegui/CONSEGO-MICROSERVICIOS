@@ -45,6 +45,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Mensajería Asincrónica con RabbitMQ (AMQP) para auditoría de usuarios -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!-- Drivers de Base de Datos (MySQL y PostgreSQL) -->
         <dependency>
             <groupId>com.mysql</groupId>

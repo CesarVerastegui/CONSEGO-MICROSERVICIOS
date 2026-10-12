@@ -41,4 +41,7 @@ public class AuditLog {
 
     @Field("detalle")
     private String detalle;
+
+    @Field("metadatos")
+    private java.util.Map<String, Object> metadatos;
 }

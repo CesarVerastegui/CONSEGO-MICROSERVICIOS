@@ -46,6 +46,12 @@ spring:
           predicates:
             - Path=/api/solicitudes/**
 
+        # Ruta hacia catálogo de plataformas en solicitudes-service
+        - id: plataformas-route
+          uri: ${SOLICITUDES_SERVICE_URI:lb://solicitudes-service}
+          predicates:
+            - Path=/api/plataformas/**
+
         # Ruta hacia audit-service
         - id: audit-service
           uri: ${AUDIT_SERVICE_URI:lb://audit-service}

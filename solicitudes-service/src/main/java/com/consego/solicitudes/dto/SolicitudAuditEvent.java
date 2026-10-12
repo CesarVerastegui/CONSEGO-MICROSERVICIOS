@@ -22,4 +22,5 @@ public class SolicitudAuditEvent implements Serializable {
     private Long usuarioId;              // ID del usuario solicitante
     private LocalDateTime fechaEvento;   // Timestamp de la operación
     private String detalle;              // Información descriptiva adicional
+    private java.util.Map<String, Object> metadatos; // Atributos dinámicos del servicio / payload schemaless
 }

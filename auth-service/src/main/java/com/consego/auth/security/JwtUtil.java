@@ -38,6 +38,9 @@ public class JwtUtil {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("id", usuario.getId());
         extraClaims.put("rol", usuario.getRol());
+        if (usuario.getCorreo() != null) extraClaims.put("correo", usuario.getCorreo());
+        if (usuario.getNombres() != null) extraClaims.put("nombres", usuario.getNombres());
+        if (usuario.getApellidos() != null) extraClaims.put("apellidos", usuario.getApellidos());
         return generateToken(extraClaims, usuario);
     }
 

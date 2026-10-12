@@ -22,12 +22,12 @@ public class SolicitudController {
     private final SolicitudService solicitudService;
 
     /**
-     * 1. GET: Listar todas las solicitudes.
-     * GET /api/solicitudes
+     * 1. GET: Listar solicitudes (todas o filtradas por usuario solicitante).
+     * GET /api/solicitudes?usuarioId={id}
      */
     @GetMapping
-    public ResponseEntity<List<Solicitud>> listarTodas() {
-        return ResponseEntity.ok(solicitudService.listarTodas());
+    public ResponseEntity<List<Solicitud>> listarTodas(@RequestParam(name = "usuarioId", required = false) Long usuarioId) {
+        return ResponseEntity.ok(solicitudService.listarTodas(usuarioId));
     }
 
     /**
@@ -52,24 +52,59 @@ public class SolicitudController {
     /**
      * 3. PUT: Actualizar estado de una solicitud existente (Aprobar/Rechazar).
      * Soporta tanto PUT /api/solicitudes/{id}?nuevoEstado=APROBADA
-     * como PUT /api/solicitudes/{id}/estado?nuevoEstado=APROBADA o con body JSON { "estado": "APROBADA" }.
+     * como PUT /api/solicitudes/{id}/estado o con body JSON { "estado": "APROBADA", "comentario": "..." }.
      */
     @PutMapping(value = {"/{id}", "/{id}/estado"})
     public ResponseEntity<Solicitud> actualizarEstado(
             @PathVariable Long id,
             @RequestParam(name = "nuevoEstado", required = false) String nuevoEstadoParam,
-            @RequestBody(required = false) Solicitud body
+            @RequestParam(name = "comentario", required = false) String comentarioParam,
+            @RequestBody(required = false) com.consego.solicitudes.dto.ResolucionRequest body
     ) {
         String estadoFinal = (nuevoEstadoParam != null && !nuevoEstadoParam.isBlank())
                 ? nuevoEstadoParam
-                : (body != null && body.getEstado() != null ? body.getEstado() : null);
+                : (body != null ? body.getEstadoFinal() : null);
+
+        String comentarioFinal = (comentarioParam != null && !comentarioParam.isBlank())
+                ? comentarioParam
+                : (body != null ? body.getComentarioFinal() : null);
 
         if (estadoFinal == null || estadoFinal.isBlank()) {
             throw new IllegalArgumentException("Debe proporcionar el parámetro 'nuevoEstado' o el campo 'estado' en el cuerpo JSON.");
         }
 
-        Solicitud actualizada = solicitudService.actualizarEstado(id, estadoFinal);
+        Solicitud actualizada = solicitudService.actualizarEstado(id, estadoFinal, comentarioFinal);
         return ResponseEntity.ok(actualizada);
+    }
+
+    /**
+     * 3.1 PUT: Aprobar solicitud con comentario de resolución.
+     * PUT /api/solicitudes/{id}/aprobar
+     */
+    @PutMapping("/{id}/aprobar")
+    public ResponseEntity<Solicitud> aprobarSolicitud(
+            @PathVariable Long id,
+            @RequestBody(required = false) com.consego.solicitudes.dto.ResolucionRequest body
+    ) {
+        String comentario = (body != null && !body.getComentarioFinal().isBlank())
+                ? body.getComentarioFinal()
+                : "Solicitud aprobada conforme a las políticas de seguridad.";
+        return ResponseEntity.ok(solicitudService.actualizarEstado(id, "APROBADA", comentario));
+    }
+
+    /**
+     * 3.2 PUT: Rechazar solicitud con comentario obligatorio de resolución.
+     * PUT /api/solicitudes/{id}/rechazar
+     */
+    @PutMapping("/{id}/rechazar")
+    public ResponseEntity<Solicitud> rechazarSolicitud(
+            @PathVariable Long id,
+            @RequestBody(required = false) com.consego.solicitudes.dto.ResolucionRequest body
+    ) {
+        String comentario = (body != null && !body.getComentarioFinal().isBlank())
+                ? body.getComentarioFinal()
+                : "Solicitud rechazada tras evaluación de riesgo.";
+        return ResponseEntity.ok(solicitudService.actualizarEstado(id, "RECHAZADA", comentario));
     }
 
     /**

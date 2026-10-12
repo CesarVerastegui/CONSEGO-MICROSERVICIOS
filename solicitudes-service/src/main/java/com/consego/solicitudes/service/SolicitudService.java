@@ -32,11 +32,19 @@ public class SolicitudService {
     private final RabbitTemplate rabbitTemplate;
 
     /**
-     * Listar todas las solicitudes registradas.
+     * Listar todas las solicitudes registradas (global o por usuario solicitante).
      */
     @Transactional(readOnly = true)
     public List<Solicitud> listarTodas() {
-        return solicitudRepository.findAll();
+        return listarTodas(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Solicitud> listarTodas(Long usuarioId) {
+        if (usuarioId != null) {
+            return solicitudRepository.findByUsuarioSolicitanteIdOrderByFechaCreacionDesc(usuarioId);
+        }
+        return solicitudRepository.findAllByOrderByFechaCreacionDesc();
     }
 
     /**
@@ -66,12 +74,25 @@ public class SolicitudService {
             );
         }
 
+        if (solicitud.getVigenciaDias() != null && solicitud.getVigenciaDias() > 0) {
+            solicitud.setFechaCaducidad(LocalDateTime.now().plusDays(solicitud.getVigenciaDias()));
+        }
+
         log.info("Usuario validado: {} (Rol: {}). Guardando solicitud...", user.getUsername(), user.getRol());
         Solicitud guardada = solicitudRepository.save(solicitud);
 
+        String vigenciaStr = guardada.getVigenciaDias() != null
+                ? " (Vigencia: " + guardada.getVigenciaDias() + " días)"
+                : " (Acceso permanente)";
+
+        String detallesStr = "";
+        if (guardada.getDetallesServicio() != null && !guardada.getDetallesServicio().isEmpty()) {
+            detallesStr = " | Parámetros: " + guardada.getDetallesServicio();
+        }
+
         // Publicación asíncrona del evento a RabbitMQ
         publicarEvento("SOLICITUD_CREADA", guardada, "solicitud.creada",
-                "Solicitud de acceso registrada para plataforma " + guardada.getPlataforma());
+                "Solicitud de acceso registrada para plataforma " + guardada.getPlataforma() + vigenciaStr + detallesStr);
 
         return guardada;
     }
@@ -96,14 +117,24 @@ public class SolicitudService {
      */
     @Transactional
     public Solicitud actualizarEstado(Long id, String nuevoEstado) {
+        return actualizarEstado(id, nuevoEstado, null);
+    }
+
+    @Transactional
+    public Solicitud actualizarEstado(Long id, String nuevoEstado, String comentario) {
         Solicitud existente = obtenerPorId(id);
         existente.setEstado(nuevoEstado);
+        if (comentario != null && !comentario.isBlank()) {
+            existente.setComentarioResolucion(comentario);
+        }
 
         Solicitud guardada = solicitudRepository.save(existente);
 
+        String detalle = "Estado de solicitud #" + id + " cambiado a " + nuevoEstado +
+                (comentario != null && !comentario.isBlank() ? ". Resolución: " + comentario : "");
+
         // Publicación asíncrona del evento
-        publicarEvento("SOLICITUD_ACTUALIZADA", guardada, "solicitud.actualizada",
-                "Estado de solicitud cambiado a " + nuevoEstado);
+        publicarEvento("SOLICITUD_ACTUALIZADA", guardada, "solicitud.actualizada", detalle);
 
         return guardada;
     }
@@ -134,6 +165,7 @@ public class SolicitudService {
                     .usuarioId(solicitud.getUsuarioSolicitanteId())
                     .fechaEvento(LocalDateTime.now())
                     .detalle(detalle)
+                    .metadatos(solicitud.getDetallesServicio())
                     .build();
 
             rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, evento);

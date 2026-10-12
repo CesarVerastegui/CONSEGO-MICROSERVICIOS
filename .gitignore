@@ -403,3 +403,14 @@ Thumbs.db
 # ==============================================================================
 scratch/
 **/scratch/
+*.bak
+
+# ==============================================================================
+# Documentos personales, informes y assets UI brutos
+# ==============================================================================
+*.docx
+*.doc
+*.zip
+img/
+stitch_consego_access_management_platform/
+stitch_consego_access_management_platform.zip

@@ -19,7 +19,7 @@ public class RabbitMQConsumerConfig {
 
     public static final String EXCHANGE_NAME = "consego.events.tx";
     public static final String QUEUE_NAME = "consego.audit.queue";
-    public static final String ROUTING_KEY_PATTERN = "solicitud.#";
+    public static final String ROUTING_KEY_PATTERN = "#";
 
     @Bean
     public TopicExchange consegoEventsExchange() {

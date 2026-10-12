@@ -47,6 +47,24 @@ public class Solicitud {
     @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
+    @Column(name = "comentario_resolucion", length = 500)
+    private String comentarioResolucion; // Comentario al aprobar o rechazar la solicitud
+
+    @Column(name = "vigencia_dias")
+    private Integer vigenciaDias; // Días de acceso temporal (ej: 30, 60, 90) o null para permanente
+
+    @Column(name = "fecha_caducidad")
+    private LocalDateTime fechaCaducidad; // Fecha calculada según vigenciaDias
+
+    /**
+     * Parámetros dinámicos y específicos enviados para la plataforma (ej: host, ip, recurso, ambiente).
+     * Almacenamiento schemaless JSON (TEXT).
+     */
+    @Column(name = "detalles_servicio", columnDefinition = "TEXT")
+    @Convert(converter = DetallesServicioConverter.class)
+    @Builder.Default
+    private java.util.Map<String, Object> detallesServicio = new java.util.HashMap<>();
+
     @Transient
     @com.fasterxml.jackson.annotation.JsonProperty("justificacion")
     public String getJustificacion() {
@@ -67,6 +85,9 @@ public class Solicitud {
         }
         if (this.estado == null || this.estado.isBlank()) {
             this.estado = "PENDIENTE";
+        }
+        if (this.vigenciaDias != null && this.vigenciaDias > 0 && this.fechaCaducidad == null) {
+            this.fechaCaducidad = this.fechaCreacion.plusDays(this.vigenciaDias);
         }
     }
 }

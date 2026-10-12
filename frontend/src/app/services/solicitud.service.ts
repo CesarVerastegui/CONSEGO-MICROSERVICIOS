@@ -1,13 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Solicitud } from '../models/solicitud.models';
+import { Solicitud, ResolucionRequest } from '../models/solicitud.models';
 
-/**
- * Servicio de Negocio para la gestión de Solicitudes de Acceso.
- * Conecta con el API Gateway en http://localhost:8080/api/solicitudes
- * e implementa los 4 métodos HTTP requeridos por la rúbrica institucional (GET, POST, PUT, DELETE).
- */
 @Injectable({
   providedIn: 'root'
 })
@@ -17,49 +12,58 @@ export class SolicitudService {
   private readonly baseUrl = 'http://localhost:8080/api/solicitudes';
 
   /**
-   * 1. GET: Retorna un Observable con la lista completa de solicitudes.
-   * GET http://localhost:8080/api/solicitudes
+   * 1. GET: Retorna la lista de solicitudes (global o por usuario solicitante).
    */
-  getSolicitudes(): Observable<Solicitud[]> {
-    return this.http.get<Solicitud[]>(this.baseUrl);
+  getSolicitudes(usuarioId?: number): Observable<Solicitud[]> {
+    const url = usuarioId ? `${this.baseUrl}?usuarioId=${usuarioId}` : this.baseUrl;
+    return this.http.get<Solicitud[]>(url);
   }
 
   /**
    * 1.1 GET: Retorna una solicitud específica por su ID.
-   * GET http://localhost:8080/api/solicitudes/{id}
    */
   getSolicitudById(id: number): Observable<Solicitud> {
     return this.http.get<Solicitud>(`${this.baseUrl}/${id}`);
   }
 
   /**
-   * 2. POST: Retorna un Observable enviando una nueva solicitud.
-   * POST http://localhost:8080/api/solicitudes
+   * 2. POST: Registrar una nueva solicitud.
    */
   crearSolicitud(data: Solicitud): Observable<Solicitud> {
     return this.http.post<Solicitud>(this.baseUrl, data);
   }
 
   /**
-   * 3. PUT: Retorna un Observable actualizando una solicitud o cambiando su estado (Aprobar/Rechazar).
-   * PUT http://localhost:8080/api/solicitudes/{id}
+   * 3. PUT: Actualizar solicitud existente.
    */
   actualizarSolicitud(id: number, data: Partial<Solicitud>): Observable<Solicitud> {
     return this.http.put<Solicitud>(`${this.baseUrl}/${id}`, data);
   }
 
   /**
-   * 3.1 PUT (Variante): Actualiza únicamente el estado de la solicitud.
-   * PUT http://localhost:8080/api/solicitudes/{id}/estado?nuevoEstado={estado}
+   * 3.1 PUT: Aprobar solicitud con comentario obligatorio de resolución.
    */
-  actualizarEstado(id: number, nuevoEstado: string): Observable<Solicitud> {
-    const params = new HttpParams().set('nuevoEstado', nuevoEstado);
-    return this.http.put<Solicitud>(`${this.baseUrl}/${id}/estado`, {}, { params });
+  aprobarSolicitud(id: number, comentario: string): Observable<Solicitud> {
+    const payload: ResolucionRequest = {
+      nuevoEstado: 'APROBADA',
+      comentario
+    };
+    return this.http.put<Solicitud>(`${this.baseUrl}/${id}/aprobar`, payload);
   }
 
   /**
-   * 4. DELETE: Retorna un Observable eliminando la solicitud especificada.
-   * DELETE http://localhost:8080/api/solicitudes/{id}
+   * 3.2 PUT: Rechazar solicitud con comentario obligatorio de resolución.
+   */
+  rechazarSolicitud(id: number, comentario: string): Observable<Solicitud> {
+    const payload: ResolucionRequest = {
+      nuevoEstado: 'RECHAZADA',
+      comentario
+    };
+    return this.http.put<Solicitud>(`${this.baseUrl}/${id}/rechazar`, payload);
+  }
+
+  /**
+   * 4. DELETE: Eliminar la solicitud especificada.
    */
   eliminarSolicitud(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);

@@ -38,6 +38,7 @@ public class AuditEventListener {
                 .usuarioId(evento.getUsuarioId())
                 .fechaEvento(evento.getFechaEvento() != null ? evento.getFechaEvento() : LocalDateTime.now())
                 .detalle(evento.getDetalle())
+                .metadatos(evento.getMetadatos())
                 .build();
 
         AuditLog guardado = auditLogRepository.save(auditLog);

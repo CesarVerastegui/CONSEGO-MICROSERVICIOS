@@ -19,6 +19,11 @@ public class AuthResponse {
     private String type = "Bearer";
     private Long id;
     private String username;
+    private String correo;
+    private String nombres;
+    private String apellidos;
     private String rol;
     private String role;
+    private boolean activo;
+    private String mensaje;
 }

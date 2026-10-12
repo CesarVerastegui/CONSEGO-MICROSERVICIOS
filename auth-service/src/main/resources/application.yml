@@ -14,6 +14,13 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  # Conexión RabbitMQ por defecto (localhost para local, rabbitmq en Docker)
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
 # Configuración del Cliente Eureka (Service Discovery)
 eureka:
   client:

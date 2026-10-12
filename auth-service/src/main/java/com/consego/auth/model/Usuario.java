@@ -31,6 +31,15 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true, length = 100)
     private String username;
 
+    @Column(nullable = false, unique = true, length = 150)
+    private String correo;
+
+    @Column(nullable = false, length = 100)
+    private String nombres;
+
+    @Column(nullable = false, length = 100)
+    private String apellidos;
+
     @Column(nullable = false)
     private String password; // Hash BCryptPasswordEncoder
 
@@ -40,6 +49,20 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     @Builder.Default
     private boolean activo = true;
+
+    @Column(name = "estado_admision", length = 30)
+    @Builder.Default
+    private String estadoAdmision = "APROBADA"; // PENDIENTE, APROBADA, RECHAZADA
+
+    @Column(name = "motivo_rechazo", length = 500)
+    private String motivoRechazo;
+
+    @Column(name = "fecha_registro")
+    @Builder.Default
+    private java.time.LocalDateTime fechaRegistro = java.time.LocalDateTime.now();
+
+    @Column(name = "fecha_aprobacion")
+    private java.time.LocalDateTime fechaAprobacion;
 
     // Métodos requeridos por UserDetails de Spring Security
     public String getRole() {

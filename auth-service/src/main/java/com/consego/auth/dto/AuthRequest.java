@@ -12,11 +12,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AuthRequest {
 
-    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
+
+    private String correo;
 
     @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
-    private String rol; // Opcional para registro (por defecto: 'Solicitante')
+    private String nombres;
+
+    private String apellidos;
+
+    private String rol; // Opcional (por defecto: 'Solicitante')
 }
