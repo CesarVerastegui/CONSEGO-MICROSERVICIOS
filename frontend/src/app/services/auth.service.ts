@@ -20,10 +20,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'consego_jwt_token';
   private readonly USER_KEY = 'consego_user_session';
 
-  /**
-   * Login con credenciales.
-   */
-  login(credentials: AuthRequest): Observable<AuthResponse> {
+    login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials).pipe(
       tap((response: AuthResponse) => {
         if (response && response.token) {
@@ -43,59 +40,35 @@ export class AuthService {
     );
   }
 
-  /**
-   * Registro público (siempre crea con rol Solicitante / Operador).
-   */
-  register(data: AuthRequest): Observable<AuthResponse> {
+    register(data: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/register`, data);
   }
 
-  /**
-   * Listar todos los usuarios para la consola de administración IAM.
-   */
-  getUsers(): Observable<UserResponse[]> {
+    getUsers(): Observable<UserResponse[]> {
     return this.http.get<UserResponse[]>(`${this.baseUrl}/users`);
   }
 
-  /**
-   * Crear un usuario desde el panel de administración IAM con rol específico.
-   */
-  createUserAdmin(data: AuthRequest): Observable<UserResponse> {
+    createUserAdmin(data: AuthRequest): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.baseUrl}/users`, data);
   }
 
-  /**
-   * Elevar o cambiar el rol de un usuario.
-   */
-  updateUserRole(id: number, rol: string): Observable<UserResponse> {
+    updateUserRole(id: number, rol: string): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.baseUrl}/users/${id}/role`, { rol });
   }
 
-  /**
-   * Aprobar / Admitir cuenta preliminar de usuario.
-   */
-  aprobarUsuario(id: number): Observable<UserResponse> {
+    aprobarUsuario(id: number): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.baseUrl}/users/${id}/aprobar`, {});
   }
 
-  /**
-   * Rechazar solicitud de admisión de usuario con motivo.
-   */
-  rechazarUsuario(id: number, motivo: string): Observable<UserResponse> {
+    rechazarUsuario(id: number, motivo: string): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.baseUrl}/users/${id}/rechazar`, { motivo });
   }
 
-  /**
-   * Activar o desactivar cuenta de usuario.
-   */
-  updateUserStatus(id: number, activo: boolean): Observable<UserResponse> {
+    updateUserStatus(id: number, activo: boolean): Observable<UserResponse> {
     return this.http.put<UserResponse>(`${this.baseUrl}/users/${id}/status`, { activo });
   }
 
-  /**
-   * Eliminar usuario por ID.
-   */
-  deleteUser(id: number): Observable<void> {
+    deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/users/${id}`);
   }
 

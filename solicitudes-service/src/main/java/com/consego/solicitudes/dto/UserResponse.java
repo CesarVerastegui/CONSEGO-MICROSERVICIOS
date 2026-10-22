@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO que mapea la respuesta de /api/auth/users/{id} consumida vía OpenFeign.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

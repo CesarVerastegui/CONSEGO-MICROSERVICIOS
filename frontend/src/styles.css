@@ -1,4 +1,3 @@
-/* Estilos Globales para CONSEGO v2.0 */
 @layer base {
   html, body {
     margin: 0;
@@ -7,7 +6,6 @@
   }
 }
 
-/* Scrollbar discreto */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

@@ -9,10 +9,8 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="flex h-screen bg-surface-canvas overflow-hidden font-sans">
-      <!-- SIDEBAR -->
       <aside class="w-64 bg-primary-midnight text-white flex flex-col justify-between border-r border-slate-800 shrink-0 z-20">
         <div>
-          <!-- Header Logo & Brand -->
           <div class="p-5 border-b border-slate-800 flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-sm">
               <span class="material-symbols-outlined text-[22px]">security</span>
@@ -22,8 +20,6 @@ import { AuthService } from '../../services/auth.service';
               <p class="text-[11px] text-slate-400">Control, Seguridad y Gobernanza</p>
             </div>
           </div>
-
-          <!-- User Role Pill -->
           <div class="px-5 py-2.5 bg-slate-900/60 border-b border-slate-800/80 flex items-center justify-between">
             <span class="text-xs text-slate-400">Rol:</span>
             <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full"
@@ -35,8 +31,6 @@ import { AuthService } from '../../services/auth.service';
               {{ authService.getRole() }}
             </span>
           </div>
-
-          <!-- Navigation Links -->
           <nav class="p-3 space-y-1">
             <a routerLink="/dashboard" routerLinkActive="bg-blue-600 text-white font-semibold"
                class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">
@@ -55,8 +49,6 @@ import { AuthService } from '../../services/auth.service';
               <span class="material-symbols-outlined text-[20px]">hub</span>
               <span>Catálogo de Plataformas</span>
             </a>
-
-            <!-- Admin Only: Usuarios -->
             @if (authService.isAdmin()) {
               <a routerLink="/usuarios" routerLinkActive="bg-blue-600 text-white font-semibold"
                  class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">
@@ -64,8 +56,6 @@ import { AuthService } from '../../services/auth.service';
                 <span>Usuarios</span>
               </a>
             }
-
-            <!-- Admin and Auditor: Auditoria -->
             @if (authService.isAdmin() || authService.isAuditor()) {
               <a routerLink="/auditoria" routerLinkActive="bg-blue-600 text-white font-semibold"
                  class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-slate-800/70 transition-colors">
@@ -75,8 +65,6 @@ import { AuthService } from '../../services/auth.service';
             }
           </nav>
         </div>
-
-        <!-- Footer User Profile & Logout -->
         <div class="p-4 border-t border-slate-800 bg-slate-900/40">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2.5">
@@ -101,10 +89,7 @@ import { AuthService } from '../../services/auth.service';
           </div>
         </div>
       </aside>
-
-      <!-- MAIN CONTENT AREA -->
       <div class="flex-1 flex flex-col h-full overflow-hidden">
-        <!-- Clean, Natural Header Bar -->
         <header class="h-14 bg-surface-card border-b border-border-default px-6 flex items-center justify-between shrink-0">
           <div class="flex items-center gap-2 text-xs text-slate-500">
             <span class="font-medium text-slate-700">Plataforma CONSEGO</span>
@@ -121,8 +106,6 @@ import { AuthService } from '../../services/auth.service';
             <span class="font-medium text-slate-700">{{ authService.getUserSession()?.username }}</span>
           </div>
         </header>
-
-        <!-- Dynamic Page Outlet -->
         <main class="flex-1 overflow-y-auto p-6 bg-surface-canvas">
           <router-outlet></router-outlet>
         </main>

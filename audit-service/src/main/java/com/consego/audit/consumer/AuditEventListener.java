@@ -10,11 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-/**
- * Consumidor de eventos de RabbitMQ para audit-service.
- * Escucha la cola "consego.audit.queue" de manera asíncrona,
- * mapea el evento entrante al documento NoSQL AuditLog y lo persiste en MongoDB.
- */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -22,11 +17,6 @@ public class AuditEventListener {
 
     private final AuditLogRepository auditLogRepository;
 
-    /**
-     * Consume eventos emitidos desde solicitudes-service y los registra en MongoDB.
-     *
-     * @param evento Objeto deserializado automáticamente desde el JSON del mensaje AMQP.
-     */
     @RabbitListener(queues = "consego.audit.queue")
     public void recibirEvento(SolicitudAuditEvent evento) {
         log.info("Mensaje AMQP recibido en 'consego.audit.queue': tipoEvento={}, entidadId={}, usuarioId={}, detalle={}",

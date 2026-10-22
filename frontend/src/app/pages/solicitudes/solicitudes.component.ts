@@ -14,7 +14,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <!-- Title & Action Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
@@ -31,10 +30,7 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           <span>Nueva Solicitud</span>
         </button>
       </div>
-
-      <!-- Filters & Search Toolbar -->
       <div class="bg-surface-card p-4 rounded-xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <!-- Filter Tabs -->
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button (click)="filterState = 'TODAS'"
                   [ngClass]="filterState === 'TODAS' ? 'bg-primary-midnight text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
@@ -57,8 +53,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
             Rechazadas ({{ countByState('RECHAZADA') }})
           </button>
         </div>
-
-        <!-- Search Input -->
         <div class="relative w-full md:w-64">
           <span class="material-symbols-outlined absolute left-3 top-2 text-slate-400 text-[18px]">search</span>
           <input type="text"
@@ -67,8 +61,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                  class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
         </div>
       </div>
-
-      <!-- Main Data Table Card -->
       <div class="bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
@@ -155,7 +147,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                     {{ item.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
                   </td>
                   <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                    <!-- Administrador o Auditor pueden evaluar -->
                     @if (authService.isAdmin() || authService.isAuditor()) {
                       @if (item.estado === 'PENDIENTE') {
                         <button (click)="openResolucionModal(item)"
@@ -193,10 +184,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           </table>
         </div>
       </div>
-
-      <!-- ============================================================== -->
-      <!-- MODAL 1: NUEVA SOLICITUD DE ACCESO                             -->
-      <!-- ============================================================== -->
       @if (showCreateModal) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
@@ -216,8 +203,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   {{ createError }}
                 </div>
               }
-
-              <!-- Seleccionar Plataforma -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Plataforma o Servicio *</label>
                 <select [(ngModel)]="newSolicitud.plataforma" name="plataforma" (change)="onPlataformaChanged()" required
@@ -228,10 +213,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   }
                 </select>
               </div>
-
-              <!-- ======================================================== -->
-              <!-- CAMPOS ESPECÍFICOS DINÁMICOS DEL SERVICIO SELECCIONADO   -->
-              <!-- ======================================================== -->
               @if (currentSelectedPlataforma?.camposPersonalizados && currentSelectedPlataforma!.camposPersonalizados!.length > 0) {
                 <div class="p-4 bg-blue-50/70 border border-blue-200 rounded-xl space-y-3">
                   <div class="flex items-center justify-between">
@@ -271,8 +252,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </div>
                 </div>
               }
-
-              <!-- Vigencia del Acceso -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Vigencia del Acceso</label>
                 <select [(ngModel)]="newSolicitud.vigenciaDias" name="vigenciaDias"
@@ -283,8 +262,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   <option [ngValue]="90">Acceso Temporal — 90 días</option>
                 </select>
               </div>
-
-              <!-- Motivo General -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Motivo / Justificación *</label>
                 <textarea [(ngModel)]="newSolicitud.motivo" name="motivo" required rows="3"
@@ -307,10 +284,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           </div>
         </div>
       }
-
-      <!-- ============================================================== -->
-      <!-- MODAL 2: RESOLUCIÓN CON COMENTARIO (ADMIN / AUDITOR)            -->
-      <!-- ============================================================== -->
       @if (showResolucionModal && selectedSolicitud) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
@@ -325,15 +298,12 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
             </div>
 
             <div class="p-6 space-y-4 overflow-y-auto">
-              <!-- Info Summary -->
               <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 text-xs space-y-1.5">
                 <p><strong>Plataforma:</strong> {{ selectedSolicitud.plataforma }}</p>
                 <p><strong>Solicitante:</strong> Usuario #{{ selectedSolicitud.usuarioSolicitanteId }}</p>
                 <p><strong>Motivo:</strong> {{ selectedSolicitud.motivo || selectedSolicitud.justificacion }}</p>
                 <p><strong>Vigencia:</strong> {{ selectedSolicitud.vigenciaDias ? (selectedSolicitud.vigenciaDias + ' días') : 'Permanente' }}</p>
               </div>
-
-              <!-- Parámetros Técnicos Específicos -->
               @if (hasDetalles(selectedSolicitud)) {
                 <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200 space-y-2">
                   <div class="flex items-center gap-1.5 text-xs font-bold text-blue-900">
@@ -350,8 +320,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </div>
                 </div>
               }
-
-              <!-- Action Selector -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-2">Decisión</label>
                 <div class="grid grid-cols-2 gap-3">
@@ -371,8 +339,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </button>
                 </div>
               </div>
-
-              <!-- Comentario Formal Obligatorio -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">
                   Comentario de Resolución <span class="text-rose-600">*</span>
@@ -407,10 +373,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           </div>
         </div>
       }
-
-      <!-- ============================================================== -->
-      <!-- MODAL 3: VER DETALLES DE SOLICITUD                             -->
-      <!-- ============================================================== -->
       @if (showDetallesModal && selectedSolicitud) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-md w-full border border-slate-200 overflow-hidden">
@@ -473,7 +435,6 @@ export class SolicitudesComponent implements OnInit {
   filterState: 'TODAS' | 'PENDIENTE' | 'APROBADA' | 'RECHAZADA' = 'TODAS';
   searchQuery = '';
 
-  // Modal Crear
   showCreateModal = false;
   isSubmitting = false;
   createError = '';
@@ -486,7 +447,6 @@ export class SolicitudesComponent implements OnInit {
   };
   newDetalles: Record<string, any> = {};
 
-  // Modal Resolución
   showResolucionModal = false;
   showDetallesModal = false;
   selectedSolicitud: Solicitud | null = null;
@@ -501,7 +461,6 @@ export class SolicitudesComponent implements OnInit {
 
   loadSolicitudes(): void {
     const session = this.authService.getUserSession();
-    // Confidencialidad: Solicitante solo ve sus solicitudes; Admin y Auditor ven todas
     const usuarioId = (this.authService.isSolicitante() && session?.id) ? session.id : undefined;
 
     this.solicitudService.getSolicitudes(usuarioId).subscribe({
@@ -517,7 +476,6 @@ export class SolicitudesComponent implements OnInit {
       next: (data) => {
         this.plataformas = data;
 
-        // Comprobar si vino con parámetro ?plataforma=... desde Catálogo
         this.route.queryParams.subscribe(params => {
           if (params['plataforma']) {
             this.openCreateModal(params['plataforma']);

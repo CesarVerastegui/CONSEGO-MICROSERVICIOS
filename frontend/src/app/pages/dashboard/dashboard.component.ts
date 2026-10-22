@@ -13,7 +13,6 @@ import { AuditLog } from '../../models/audit.models';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="space-y-6">
-      <!-- Title & Greeting Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
@@ -37,10 +36,7 @@ import { AuditLog } from '../../models/audit.models';
           </a>
         </div>
       </div>
-
-      <!-- 4 KPI SUMMARY CARDS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Card 1: Total Solicitudes -->
         <div class="bg-surface-card p-5 rounded-xl border border-border-default shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total</span>
@@ -53,8 +49,6 @@ import { AuditLog } from '../../models/audit.models';
             <p class="text-xs text-slate-400 mt-1">Solicitudes registradas</p>
           </div>
         </div>
-
-        <!-- Card 2: Pendientes -->
         <div class="bg-surface-card p-5 rounded-xl border border-amber-200/80 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Pendientes</span>
@@ -67,8 +61,6 @@ import { AuditLog } from '../../models/audit.models';
             <p class="text-xs text-amber-700/80 mt-1">En espera de revisión</p>
           </div>
         </div>
-
-        <!-- Card 3: Aprobadas -->
         <div class="bg-surface-card p-5 rounded-xl border border-emerald-200/80 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Aprobadas</span>
@@ -81,8 +73,6 @@ import { AuditLog } from '../../models/audit.models';
             <p class="text-xs text-emerald-700/80 mt-1">Acceso otorgado</p>
           </div>
         </div>
-
-        <!-- Card 4: Rechazadas -->
         <div class="bg-surface-card p-5 rounded-xl border border-rose-200/80 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Rechazadas</span>
@@ -96,11 +86,7 @@ import { AuditLog } from '../../models/audit.models';
           </div>
         </div>
       </div>
-
-      <!-- MAIN SPLIT: RECENT REQUESTS & AUDIT TIMELINE -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <!-- LEFT: TABLA RECIENTES (8 cols) -->
         <div class="lg:col-span-8 bg-surface-card rounded-xl border border-border-default shadow-sm p-5">
           <div class="flex items-center justify-between mb-4">
             <div>
@@ -156,8 +142,6 @@ import { AuditLog } from '../../models/audit.models';
             </table>
           </div>
         </div>
-
-        <!-- RIGHT: AUDIT FEED OR USER INFO (4 cols) -->
         <div class="lg:col-span-4 bg-surface-card rounded-xl border border-border-default shadow-sm p-5 flex flex-col justify-between">
           @if (authService.isAdmin() || authService.isAuditor()) {
             <div>

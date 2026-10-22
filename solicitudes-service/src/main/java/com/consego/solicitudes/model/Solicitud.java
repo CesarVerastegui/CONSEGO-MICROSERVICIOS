@@ -10,10 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Entidad Solicitud mapeada a la tabla 'solicitudes' según los campos exactos de la rúbrica:
- * id, plataforma, motivo, estado, usuarioSolicitanteId, fechaCreacion.
- */
 @Entity
 @Table(name = "solicitudes")
 @Data
@@ -32,7 +28,7 @@ public class Solicitud {
 
     @Column(length = 500)
     @com.fasterxml.jackson.annotation.JsonAlias({"justificacion", "motivo"})
-    private String motivo; // Motivo o justificación de la solicitud
+    private String motivo;
 
     @NotBlank(message = "El estado es obligatorio")
     @Column(nullable = false, length = 50)
@@ -48,18 +44,14 @@ public class Solicitud {
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @Column(name = "comentario_resolucion", length = 500)
-    private String comentarioResolucion; // Comentario al aprobar o rechazar la solicitud
+    private String comentarioResolucion;
 
     @Column(name = "vigencia_dias")
-    private Integer vigenciaDias; // Días de acceso temporal (ej: 30, 60, 90) o null para permanente
+    private Integer vigenciaDias;
 
     @Column(name = "fecha_caducidad")
-    private LocalDateTime fechaCaducidad; // Fecha calculada según vigenciaDias
+    private LocalDateTime fechaCaducidad;
 
-    /**
-     * Parámetros dinámicos y específicos enviados para la plataforma (ej: host, ip, recurso, ambiente).
-     * Almacenamiento schemaless JSON (TEXT).
-     */
     @Column(name = "detalles_servicio", columnDefinition = "TEXT")
     @Convert(converter = DetallesServicioConverter.class)
     @Builder.Default

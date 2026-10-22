@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * Entidad Plataforma para la gestión del catálogo dinámico de servicios en CONSEGO v2.0.
- */
 @Entity
 @Table(name = "plataformas")
 @Data
@@ -30,7 +27,7 @@ public class Plataforma {
 
     @NotBlank(message = "La categoría es obligatoria")
     @Column(nullable = false, length = 100)
-    private String categoria; // Cloud & Infraestructura, DevOps & CI/CD, Base de Datos, SaaS Empresarial
+    private String categoria;
 
     @NotBlank(message = "La criticidad es obligatoria")
     @Column(nullable = false, length = 50)
@@ -52,10 +49,6 @@ public class Plataforma {
     @Builder.Default
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
-    /**
-     * Definición de campos dinámicos específicos que esta plataforma requiere al solicitar acceso.
-     * Almacenado como JSON semi-estructurado (schemaless).
-     */
     @Column(name = "campos_personalizados", columnDefinition = "TEXT")
     @Convert(converter = CamposPersonalizadosConverter.class)
     @Builder.Default

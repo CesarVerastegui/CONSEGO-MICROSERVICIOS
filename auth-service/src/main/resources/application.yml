@@ -14,14 +14,12 @@ spring:
       ddl-auto: update
     show-sql: true
 
-  # Conexión RabbitMQ por defecto (localhost para local, rabbitmq en Docker)
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:localhost}
     port: ${SPRING_RABBITMQ_PORT:5672}
     username: ${SPRING_RABBITMQ_USERNAME:guest}
     password: ${SPRING_RABBITMQ_PASSWORD:guest}
 
-# Configuración del Cliente Eureka (Service Discovery)
 eureka:
   client:
     service-url:
@@ -31,9 +29,8 @@ eureka:
 
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 28800000 # 8 horas
+  expiration: 28800000
 
-# Observabilidad con Spring Boot Actuator (Tema 7 del Sílabo)
 management:
   endpoints:
     web:

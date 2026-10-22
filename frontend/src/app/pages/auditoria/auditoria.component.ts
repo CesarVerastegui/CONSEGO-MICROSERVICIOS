@@ -10,7 +10,6 @@ import { AuditLog } from '../../models/audit.models';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <!-- Title & Action Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Auditoría</h1>
@@ -32,8 +31,6 @@ import { AuditLog } from '../../models/audit.models';
           </button>
         </div>
       </div>
-
-      <!-- Filters Toolbar -->
       <div class="bg-surface-card p-4 rounded-xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button (click)="filterEvent = 'TODOS'"
@@ -76,8 +73,6 @@ import { AuditLog } from '../../models/audit.models';
                  class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
         </div>
       </div>
-
-      <!-- Logs Table Card -->
       <div class="bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
@@ -150,10 +145,6 @@ import { AuditLog } from '../../models/audit.models';
           </table>
         </div>
       </div>
-
-      <!-- ============================================================== -->
-      <!-- MODAL: VISOR DE JSON DOCUMENT                                  -->
-      <!-- ============================================================== -->
       @if (selectedJsonLog) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-slate-900 rounded-2xl shadow-xl max-w-xl w-full border border-slate-700 overflow-hidden text-white">

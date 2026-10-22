@@ -9,10 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Convertidor JPA para serializar y deserializar la lista de campos personalizados de una plataforma a formato JSON (TEXT).
- * Proporciona flexibilidad no relacional (schemaless) sobre bases de datos SQL (H2, MySQL, PostgreSQL).
- */
 @Converter
 @Slf4j
 public class CamposPersonalizadosConverter implements AttributeConverter<List<CampoPersonalizado>, String> {

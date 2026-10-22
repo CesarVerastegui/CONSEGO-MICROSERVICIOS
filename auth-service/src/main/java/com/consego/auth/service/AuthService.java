@@ -20,13 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Servicio de lógica de negocio para auth-service:
- * - Cifrado con BCryptPasswordEncoder.
- * - Validación de credenciales por username o correo.
- * - Flujo de admisión preliminar (Aprobación y Rechazo con motivo).
- * - Emisión asíncrona de eventos de auditoría a RabbitMQ.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -84,10 +77,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * POST /register: Recibe datos de usuario y persiste en modo preliminar (activo = false, estadoAdmision = PENDIENTE).
-     * Emite evento USUARIO_REGISTRADO a RabbitMQ.
-     */
     @Transactional
     public AuthResponse register(AuthRequest request) {
         if (request.getUsername() == null || request.getUsername().isBlank()) {
@@ -130,7 +119,6 @@ public class AuthService {
 
         Usuario guardado = usuarioRepository.save(usuario);
 
-        // Emitir evento asíncrono a RabbitMQ
         publicarEvento("USUARIO_REGISTRADO", guardado.getId(), guardado.getId(),
                 RabbitMQConfig.ROUTING_KEY_REGISTRADO,
                 "Nuevo usuario registrado preliminarmente: @" + guardado.getUsername() + " (" + guardado.getCorreo() + ")");
@@ -149,10 +137,6 @@ public class AuthService {
                 .build();
     }
 
-    /**
-     * POST /login: Valida credenciales por usuario o correo.
-     * Si fue rechazada o está pendiente, arroja mensaje explícito.
-     */
     @Transactional(readOnly = true)
     public AuthResponse login(AuthRequest request) {
         String identifier = request.getUsername() != null && !request.getUsername().isBlank()
@@ -170,7 +154,6 @@ public class AuthService {
             throw new BadCredentialsException("Credenciales inválidas: usuario o contraseña incorrectos");
         }
 
-        // Validación de estado de admisión
         if ("RECHAZADA".equalsIgnoreCase(usuario.getEstadoAdmision())) {
             String motivo = (usuario.getMotivoRechazo() != null && !usuario.getMotivoRechazo().isBlank())
                     ? usuario.getMotivoRechazo()
@@ -198,9 +181,6 @@ public class AuthService {
                 .build();
     }
 
-    /**
-     * GET /users/{id}: Retorna datos del usuario para consumo interno OpenFeign.
-     */
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         return usuarioRepository.findById(id)
@@ -208,9 +188,6 @@ public class AuthService {
                 .orElse(UserResponse.builder().id(id).exists(false).build());
     }
 
-    /**
-     * Listar todos los usuarios para la consola de administración IAM.
-     */
     @Transactional(readOnly = true)
     public List<UserResponse> listarUsuarios() {
         return usuarioRepository.findAll().stream()
@@ -218,9 +195,6 @@ public class AuthService {
                 .toList();
     }
 
-    /**
-     * Crear un usuario desde la consola de administración IAM (activo = true, estadoAdmision = APROBADA).
-     */
     @Transactional
     public UserResponse crearUsuarioAdmin(AuthRequest request) {
         if (request.getUsername() == null || request.getUsername().isBlank()) {
@@ -261,9 +235,6 @@ public class AuthService {
         return mapToUserResponse(guardado);
     }
 
-    /**
-     * Aprobar / Admitir usuario preliminar.
-     */
     @Transactional
     public UserResponse aprobarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -282,9 +253,6 @@ public class AuthService {
         return mapToUserResponse(guardado);
     }
 
-    /**
-     * Rechazar admisión de usuario con motivo.
-     */
     @Transactional
     public UserResponse rechazarUsuario(Long id, String motivo) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -302,9 +270,6 @@ public class AuthService {
         return mapToUserResponse(guardado);
     }
 
-    /**
-     * Actualizar o elevar el rol de un usuario (Admin, Auditor, Solicitante).
-     */
     @Transactional
     public UserResponse actualizarRol(Long id, String nuevoRol) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -314,9 +279,6 @@ public class AuthService {
         return mapToUserResponse(guardado);
     }
 
-    /**
-     * Activar o desactivar cuenta de usuario.
-     */
     @Transactional
     public UserResponse actualizarEstado(Long id, boolean activo) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -332,9 +294,6 @@ public class AuthService {
         return mapToUserResponse(guardado);
     }
 
-    /**
-     * Eliminar usuario por ID.
-     */
     @Transactional
     public void eliminarUsuario(Long id) {
         if (!usuarioRepository.existsById(id)) {

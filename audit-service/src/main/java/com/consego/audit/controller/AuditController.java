@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador REST para consultar los logs de auditoría generados por el sistema.
- */
 @RestController
 @RequestMapping("/api/audit")
 @RequiredArgsConstructor

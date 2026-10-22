@@ -411,6 +411,13 @@ scratch/
 *.docx
 *.doc
 *.zip
+*.pptx
+*.pdf
+*.bak*
+*.bak_user
+docs/
+GUION*
 img/
+v3.0/
 stitch_consego_access_management_platform/
 stitch_consego_access_management_platform.zip

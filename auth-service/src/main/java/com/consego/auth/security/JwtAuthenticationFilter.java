@@ -16,10 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Filtro de autenticación por petición para auth-service.
- * Utiliza JwtUtil para extraer y validar el Bearer token en cabeceras HTTP.
- */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

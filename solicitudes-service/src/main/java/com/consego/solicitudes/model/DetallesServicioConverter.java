@@ -9,10 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Convertidor JPA para serializar y deserializar los parámetros específicos de la solicitud a JSON (TEXT).
- * Permite almacenar atributos dinámicos (clave-valor) de forma flexible sin alterar esquemas de tablas.
- */
 @Converter
 @Slf4j
 public class DetallesServicioConverter implements AttributeConverter<Map<String, Object>, String> {

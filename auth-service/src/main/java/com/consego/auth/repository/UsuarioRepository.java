@@ -6,9 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * Repositorio Spring Data JPA para la entidad Usuario.
- */
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 

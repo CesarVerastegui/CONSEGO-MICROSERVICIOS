@@ -15,10 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Pruebas unitarias para el repositorio NoSQL AuditLogRepository (MongoDB).
- * Valida la correcta persistencia y consulta de documentos de auditoría.
- */
 @ExtendWith(MockitoExtension.class)
 class AuditLogRepositoryTest {
 

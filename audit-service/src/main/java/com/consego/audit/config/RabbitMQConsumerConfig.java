@@ -9,11 +9,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de RabbitMQ para el microservicio consumidor (audit-service).
- * Configura la serialización y deserialización JSON mediante Jackson2JsonMessageConverter
- * e infraestructura de TopicExchange y Queue según la rúbrica oficial.
- */
 @Configuration
 public class RabbitMQConsumerConfig {
 
@@ -38,9 +33,6 @@ public class RabbitMQConsumerConfig {
                 .with(ROUTING_KEY_PATTERN);
     }
 
-    /**
-     * Bean requerido para deserializar los mensajes JSON provenientes de RabbitMQ.
-     */
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();

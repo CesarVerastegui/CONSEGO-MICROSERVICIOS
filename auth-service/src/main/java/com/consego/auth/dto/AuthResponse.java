@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO para la respuesta de login conteniendo el JWT, id, rol y username exigidos por la rúbrica y el frontend.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

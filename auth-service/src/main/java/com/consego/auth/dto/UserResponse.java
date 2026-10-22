@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO para la respuesta de /users/{id} para consumo interno de microservicios (OpenFeign).
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -8,10 +8,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de RabbitMQ para auth-service:
- * Emite eventos de auditoría para registro y admisión de usuarios hacia TopicExchange 'consego.events.tx'.
- */
 @Configuration
 public class RabbitMQConfig {
 

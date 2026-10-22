@@ -12,10 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Entidad Usuario para la base de datos de auth-service.
- * Mapeada a la tabla 'usuarios' con Lombok y campos estrictos de la rúbrica.
- */
 @Entity
 @Table(name = "usuarios")
 @Data
@@ -41,10 +37,10 @@ public class Usuario implements UserDetails {
     private String apellidos;
 
     @Column(nullable = false)
-    private String password; // Hash BCryptPasswordEncoder
+    private String password;
 
     @Column(nullable = false, length = 50)
-    private String rol; // Rol del usuario: Admin, AnalistaSeguridad, Solicitante, Infra, Auditor
+    private String rol;
 
     @Column(nullable = false)
     @Builder.Default
@@ -64,7 +60,6 @@ public class Usuario implements UserDetails {
     @Column(name = "fecha_aprobacion")
     private java.time.LocalDateTime fechaAprobacion;
 
-    // Métodos requeridos por UserDetails de Spring Security
     public String getRole() {
         return this.rol;
     }

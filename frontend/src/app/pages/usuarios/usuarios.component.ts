@@ -10,7 +10,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <!-- Title & Action Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Gestión de Usuarios</h1>
@@ -23,16 +22,11 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
           <span>Nuevo Usuario</span>
         </button>
       </div>
-
-      <!-- Quick Stats (5 items) -->
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <!-- Total -->
         <div class="p-4 rounded-xl bg-surface-card border border-border-default shadow-sm">
           <p class="text-xs font-semibold text-slate-500 uppercase">Total Usuarios</p>
           <p class="text-2xl font-bold text-slate-900 font-mono mt-1">{{ users.length }}</p>
         </div>
-
-        <!-- Pendientes -->
         <div class="p-4 rounded-xl bg-surface-card border border-amber-300 shadow-sm bg-amber-50/40">
           <div class="flex items-center justify-between">
             <p class="text-xs font-semibold text-amber-800 uppercase">Pendientes</p>
@@ -40,27 +34,19 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
           </div>
           <p class="text-2xl font-bold text-amber-700 font-mono mt-1">{{ countStatus('PENDIENTE') }}</p>
         </div>
-
-        <!-- Aprobados -->
         <div class="p-4 rounded-xl bg-surface-card border border-emerald-200 shadow-sm">
           <p class="text-xs font-semibold text-emerald-700 uppercase">Aprobados</p>
           <p class="text-2xl font-bold text-emerald-600 font-mono mt-1">{{ countStatus('APROBADA') }}</p>
         </div>
-
-        <!-- Rechazados -->
         <div class="p-4 rounded-xl bg-surface-card border border-rose-200 shadow-sm">
           <p class="text-xs font-semibold text-rose-700 uppercase">Rechazados</p>
           <p class="text-2xl font-bold text-rose-600 font-mono mt-1">{{ countStatus('RECHAZADA') }}</p>
         </div>
-
-        <!-- Admins & Auditores -->
         <div class="p-4 rounded-xl bg-surface-card border border-purple-200 shadow-sm col-span-2 sm:col-span-1">
           <p class="text-xs font-semibold text-purple-700 uppercase">Privilegiados</p>
           <p class="text-2xl font-bold text-purple-600 font-mono mt-1">{{ countPrivileged() }}</p>
         </div>
       </div>
-
-      <!-- Users Data Table Card -->
       <div class="bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
         <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center gap-2">
@@ -101,8 +87,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                     [class.bg-amber-50]="user.estadoAdmision === 'PENDIENTE'"
                     [class.bg-rose-50]="user.estadoAdmision === 'RECHAZADA'">
                   <td class="py-3.5 px-4 font-mono font-bold text-slate-900">#{{ user.id }}</td>
-                  
-                  <!-- Usuario y Nombre completo -->
                   <td class="py-3.5 px-4">
                     <div class="flex items-center gap-2.5">
                       <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
@@ -116,13 +100,9 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                       </div>
                     </div>
                   </td>
-
-                  <!-- Correo -->
                   <td class="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
                     {{ user.correo || '-' }}
                   </td>
-
-                  <!-- Rol -->
                   <td class="py-3.5 px-4">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold"
                           [ngClass]="{
@@ -139,8 +119,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                       {{ user.rol }}
                     </span>
                   </td>
-
-                  <!-- Estado Admisión -->
                   <td class="py-3.5 px-4">
                     @if (user.estadoAdmision === 'APROBADA' || (!user.estadoAdmision && user.activo)) {
                       <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -166,16 +144,12 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                       </span>
                     }
                   </td>
-
-                  <!-- Trazabilidad Fechas -->
                   <td class="py-3.5 px-4 text-[11px] text-slate-500 font-mono">
                     <div>Reg: {{ user.fechaRegistro ? (user.fechaRegistro | date:'dd/MM/yy HH:mm') : 'Inicial' }}</div>
                     @if (user.fechaAprobacion) {
                       <div class="text-[10px] text-emerald-700">Apr: {{ user.fechaAprobacion | date:'dd/MM/yy HH:mm' }}</div>
                     }
                   </td>
-
-                  <!-- Cambiar Rol -->
                   <td class="py-3.5 px-4 text-center">
                     <div class="inline-flex rounded-lg border border-slate-200 overflow-hidden shadow-2xs">
                       <button (click)="changeRole(user, 'Solicitante')"
@@ -198,8 +172,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                       </button>
                     </div>
                   </td>
-
-                  <!-- Acciones de Aprobación / Rechazo -->
                   <td class="py-3.5 px-4 text-right whitespace-nowrap">
                     @if (user.estadoAdmision === 'PENDIENTE') {
                       <div class="inline-flex items-center gap-1.5">
@@ -238,10 +210,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
           </table>
         </div>
       </div>
-
-      <!-- ============================================================== -->
-      <!-- MODAL: REGISTRAR NUEVO USUARIO (ADMIN)                         -->
-      <!-- ============================================================== -->
       @if (showCreateModal) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full border border-slate-200 overflow-hidden">
@@ -261,8 +229,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                   {{ createError }}
                 </div>
               }
-
-              <!-- Nombres y Apellidos -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">Nombres <span class="text-rose-600">*</span></label>
@@ -277,16 +243,12 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                          class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
               </div>
-
-              <!-- Correo -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Correo Electrónico <span class="text-rose-600">*</span></label>
                 <input type="email" [(ngModel)]="newUser.correo" name="correo" required
                        placeholder="usuario@empresa.com"
                        class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
               </div>
-
-              <!-- Usuario y Contraseña -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre de Usuario <span class="text-rose-600">*</span></label>
@@ -302,8 +264,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
                          class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
               </div>
-
-              <!-- Rol -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Rol Inicial</label>
                 <select [(ngModel)]="newUser.rol" name="rol" required
@@ -329,10 +289,6 @@ import { UserResponse, AuthRequest } from '../../models/auth.models';
           </div>
         </div>
       }
-
-      <!-- ============================================================== -->
-      <!-- MODAL: RECHAZAR ADMISIÓN CON MOTIVO                            -->
-      <!-- ============================================================== -->
       @if (showRechazoModal && userToReject) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-md w-full border border-slate-200 overflow-hidden">
@@ -397,7 +353,6 @@ export class UsuariosComponent implements OnInit {
   isSubmitting = false;
   createError = '';
 
-  // Rechazo Modal
   showRechazoModal = false;
   userToReject: UserResponse | null = null;
   motivoRechazo = '';

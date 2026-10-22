@@ -15,13 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Servicio utilitario para generar, firmar y validar tokens JWT.
- */
 @Service
 public class JwtService {
 
-    // Clave secreta por defecto en Base64 (256-bit para HMAC-SHA256)
     @Value("${jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
     private String secretKey;
 

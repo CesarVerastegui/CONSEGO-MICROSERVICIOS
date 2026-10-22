@@ -17,10 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Utilidad JwtUtil para generación y validación de tokens JWT HMAC-SHA256
- * con fecha de expiración y firma segura.
- */
 @Component
 @Slf4j
 public class JwtUtil {
@@ -31,9 +27,6 @@ public class JwtUtil {
     @Value("${jwt.expiration:28800000}") // 8 horas en milisegundos
     private long jwtExpiration;
 
-    /**
-     * Genera un token JWT firmado para el usuario con claims adicionales (id, rol).
-     */
     public String generateToken(Usuario usuario) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("id", usuario.getId());
@@ -54,9 +47,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    /**
-     * Valida el token comprobando firma, usuario y vigencia.
-     */
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);

@@ -11,9 +11,6 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { auditorGuard } from './guards/auditor.guard';
 
-/**
- * Enrutamiento central para CONSEGO v2.0
- */
 export const routes: Routes = [
   {
     path: 'login',

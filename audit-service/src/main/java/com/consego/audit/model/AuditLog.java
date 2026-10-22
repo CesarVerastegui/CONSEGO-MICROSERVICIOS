@@ -10,12 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-/**
- * Documento NoSQL AuditLog para persistir la trazabilidad histórica de eventos en MongoDB.
- * Implementa el patrón de Persistencia Políglota (Polyglot Persistence):
- * - Microservicios transaccionales (auth, solicitudes): MySQL (Relacional / ACID)
- * - Microservicio de auditoría y telemetría (audit): MongoDB (NoSQL Documental)
- */
 @Document(collection = "audit_logs")
 @Data
 @NoArgsConstructor
@@ -27,7 +21,7 @@ public class AuditLog {
     private String id;
 
     @Field("tipo_evento")
-    private String tipoEvento; // SOLICITUD_CREADA, SOLICITUD_ACTUALIZADA, SOLICITUD_ELIMINADA
+    private String tipoEvento;
 
     @Field("entidad_id")
     private Long entidadId;

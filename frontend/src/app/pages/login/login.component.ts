@@ -11,10 +11,7 @@ import { AuthRequest } from '../../models/auth.models';
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <div class="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 font-sans">
-      <!-- Card Container -->
       <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-200 p-8 sm:p-10">
-        
-        <!-- Brand Header -->
         <div class="flex flex-col items-center text-center mb-8">
           <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md mb-3">
             <span class="material-symbols-outlined text-[28px]">security</span>
@@ -22,22 +19,16 @@ import { AuthRequest } from '../../models/auth.models';
           <h1 class="font-bold text-2xl text-slate-900 tracking-tight">CONSEGO</h1>
           <p class="text-xs text-slate-500 mt-1">Control, Seguridad y Gobernanza</p>
         </div>
-
-        <!-- Form Title -->
         <div class="mb-6">
           <h2 class="text-xl font-bold text-slate-900">Iniciar Sesión</h2>
           <p class="text-xs text-slate-500 mt-1">Ingresa tus credenciales para acceder a la plataforma.</p>
         </div>
-
-        <!-- Login Error Message -->
         @if (loginError) {
           <div class="mb-5 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <span class="material-symbols-outlined text-base shrink-0">error</span>
             <span>{{ loginError }}</span>
           </div>
         }
-
-        <!-- Login Form -->
         <form (ngSubmit)="onLogin()" class="space-y-4">
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Usuario o Correo Electrónico</label>
@@ -88,8 +79,6 @@ import { AuthRequest } from '../../models/auth.models';
             }
           </button>
         </form>
-
-        <!-- Divider & Register Callout -->
         <div class="mt-8 pt-6 border-t border-slate-100 text-center">
           <p class="text-xs text-slate-500 mb-3">¿Aún no tienes una cuenta?</p>
           <a routerLink="/register"

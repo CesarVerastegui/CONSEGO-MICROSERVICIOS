@@ -8,13 +8,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de RabbitMQ para solicitudes-service según directiva de rúbrica:
- * - TopicExchange("consego.events.tx")
- * - Queue("consego.audit.queue")
- * - Binding con routing key "solicitud.#"
- * - Jackson2JsonMessageConverter para el RabbitTemplate.
- */
 @Configuration
 public class RabbitMQConfig {
 

@@ -12,9 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-/**
- * Utilidad de validación y extracción de información de tokens JWT en el API Gateway.
- */
 @Component
 @Slf4j
 public class JwtUtil {
@@ -22,12 +19,6 @@ public class JwtUtil {
     @Value("${jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
     private String secretKey;
 
-    /**
-     * Valida la firma del token y comprueba que no haya expirado.
-     *
-     * @param token Token JWT sin el prefijo "Bearer ".
-     * @return true si el token es íntegro y vigente, false en caso contrario.
-     */
     public boolean validateToken(String token) {
         try {
             Claims claims = extractAllClaims(token);
@@ -43,9 +34,6 @@ public class JwtUtil {
         }
     }
 
-    /**
-     * Extrae el payload (Claims) del token.
-     */
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSignInKey())

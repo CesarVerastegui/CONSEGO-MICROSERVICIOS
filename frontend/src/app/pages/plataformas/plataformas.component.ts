@@ -12,7 +12,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <!-- Title & Action Bar -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Catálogo de Servicios y Plataformas</h1>
@@ -29,8 +28,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           </button>
         }
       </div>
-
-      <!-- Filters & Search Toolbar -->
       <div class="bg-surface-card p-4 rounded-xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button (click)="selectedCategory = 'TODAS'"
@@ -73,19 +70,15 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                  class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
         </div>
       </div>
-
-      <!-- PLATFORMS GRID -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         @for (item of filteredPlataformas; track item.id) {
           <div class="bg-surface-card rounded-xl border border-border-default shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between">
             <div>
-              <!-- Top Row: Icon, Title & Criticality -->
               <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
                   <span class="material-symbols-outlined text-[22px]">{{ item.icono || 'cloud' }}</span>
                 </div>
                 <div class="flex flex-col items-end gap-1">
-                  <!-- Criticality Badge -->
                   <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider"
                         [ngClass]="{
                           'bg-rose-100 text-rose-800 border border-rose-200': item.criticidad === 'CRITICA',
@@ -95,7 +88,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                         }">
                     {{ item.criticidad }}
                   </span>
-                  <!-- Active status -->
                   <span class="text-[11px] flex items-center gap-1"
                         [ngClass]="item.activa ? 'text-emerald-600' : 'text-slate-400'">
                     <span class="w-1.5 h-1.5 rounded-full" [ngClass]="item.activa ? 'bg-emerald-500' : 'bg-slate-300'"></span>
@@ -103,17 +95,11 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </span>
                 </div>
               </div>
-
-              <!-- Name & Category -->
               <h3 class="font-bold text-base text-slate-900 leading-snug">{{ item.nombre }}</h3>
               <p class="text-xs text-blue-600 font-medium mt-0.5">{{ item.categoria }}</p>
-
-              <!-- Description -->
               <p class="text-xs text-slate-600 mt-2.5 line-clamp-2">
                 {{ item.descripcion || 'Sin descripción disponible.' }}
               </p>
-
-              <!-- Dynamic Fields Badge List -->
               @if (item.camposPersonalizados && item.camposPersonalizados.length > 0) {
                 <div class="mt-3.5 pt-3 border-t border-slate-100">
                   <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1 mb-1.5">
@@ -139,29 +125,22 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                 </div>
               }
             </div>
-
-            <!-- Footer Actions -->
             <div class="pt-4 border-t border-slate-100 mt-4 flex items-center justify-between gap-2">
               <span class="text-[11px] font-mono text-slate-400">ID: #{{ item.id }}</span>
 
               <div class="flex items-center gap-2">
                 @if (authService.isAdmin()) {
-                  <!-- Edit Platform Button -->
                   <button (click)="openEditModal(item)"
                           title="Editar plataforma y parámetros"
                           class="p-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs transition-colors">
                     <span class="material-symbols-outlined text-[16px]">edit</span>
                   </button>
-
-                  <!-- Toggle Active Status -->
                   <button (click)="toggleEstado(item)"
                           [title]="item.activa ? 'Desactivar plataforma' : 'Activar plataforma'"
                           class="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-100 text-xs transition-colors">
                     <span class="material-symbols-outlined text-[16px]">{{ item.activa ? 'toggle_on' : 'toggle_off' }}</span>
                   </button>
                 }
-
-                <!-- Solicitar Acceso Button -->
                 <button (click)="solicitarAcceso(item)"
                         [disabled]="!item.activa"
                         class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-all flex items-center gap-1 disabled:opacity-40 shadow-xs">
@@ -177,10 +156,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
           </div>
         }
       </div>
-
-      <!-- ============================================================== -->
-      <!-- MODAL: CREAR / EDITAR PLATAFORMA & CAMPOS DINÁMICOS             -->
-      <!-- ============================================================== -->
       @if (showModal) {
         <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl max-w-xl w-full border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
@@ -200,16 +175,12 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   {{ modalError }}
                 </div>
               }
-
-              <!-- Nombre -->
               <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Servicio o Plataforma</label>
                 <input type="text" [(ngModel)]="currentPlat.nombre" name="nombre" required
                        placeholder="Ej: AWS Cloud, VPN Corporativa, Jira, Oracle DB..."
                        class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
               </div>
-
-              <!-- Categoría y Criticidad -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-slate-700 mb-1">Categoría</label>
@@ -234,8 +205,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </select>
                 </div>
               </div>
-
-              <!-- Icono y Descripción -->
               <div class="grid grid-cols-3 gap-3">
                 <div class="col-span-1">
                   <label class="block text-xs font-semibold text-slate-700 mb-1">Icono Material</label>
@@ -250,10 +219,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                          class="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
               </div>
-
-              <!-- ======================================================== -->
-              <!-- GESTOR DE PARÁMETROS DINÁMICOS (SCHEMALESS)               -->
-              <!-- ======================================================== -->
               <div class="pt-3 border-t border-slate-200">
                 <div class="flex items-center justify-between mb-2">
                   <div>
@@ -266,8 +231,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                     </p>
                   </div>
                 </div>
-
-                <!-- Plantillas Rápidas -->
                 <div class="flex items-center gap-1.5 mb-3 flex-wrap">
                   <span class="text-[10px] text-slate-400 font-medium">Plantillas:</span>
                   <button type="button" (click)="applyTemplate('aws')"
@@ -283,8 +246,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                     + BD (Schema, Privilegios)
                   </button>
                 </div>
-
-                <!-- Lista de Campos Configurados -->
                 <div class="space-y-2 mb-3">
                   @for (campo of currentPlat.camposPersonalizados; track campo.id; let idx = $index) {
                     <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
@@ -314,8 +275,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                     </div>
                   }
                 </div>
-
-                <!-- Formulario para Agregar Nuevo Campo -->
                 <div class="p-3 rounded-xl bg-blue-50/50 border border-blue-200 space-y-2.5">
                   <div class="text-[11px] font-bold text-blue-900 flex items-center gap-1">
                     <span class="material-symbols-outlined text-[14px]">add_circle</span>
@@ -371,8 +330,6 @@ import { Plataforma, CampoPersonalizado } from '../../models/plataforma.models';
                   </div>
                 </div>
               </div>
-
-              <!-- Footer Modal Actions -->
               <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
                 <button type="button" (click)="showModal = false"
                         class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
@@ -415,7 +372,6 @@ export class PlataformasComponent implements OnInit {
     camposPersonalizados: []
   };
 
-  // Buffer para agregar un nuevo campo dinámico
   newCampo: CampoPersonalizado = {
     id: '',
     etiqueta: '',

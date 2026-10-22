@@ -24,27 +24,19 @@
     </properties>
     
     <dependencies>
-        <!-- Spring Cloud Gateway: Motor de enrutamiento perimetral reactivo (Basado en Netty) -->
-        <!-- NOTA CRÍTICA: NO incluir spring-boot-starter-web para no romper la reactividad -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
-
-        <!-- Spring Cloud Netflix Eureka Client para descubrimiento dinámico -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-
-        <!-- Lombok para evitar código repetitivo -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- Librerías JJWT para validación perimetral de tokens JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -62,15 +54,11 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Observabilidad y Monitoreo: Spring Boot Actuator (Tema 7 del Sílabo) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
