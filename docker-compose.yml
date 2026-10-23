@@ -73,6 +73,7 @@ services:
       start_period: 20s
 
   eureka-server:
+    image: consego-v3-eureka:3.0
     build:
       context: ./eureka-server
       dockerfile_inline: |
@@ -103,6 +104,7 @@ services:
       start_period: 25s
 
   auth-service:
+    image: consego-v3-auth:3.0
     build:
       context: ./auth-service
       dockerfile_inline: |
@@ -143,6 +145,7 @@ services:
       - consego-v3-network
 
   solicitudes-service:
+    image: consego-v3-solicitudes:3.0
     build:
       context: ./solicitudes-service
       dockerfile_inline: |
@@ -186,6 +189,7 @@ services:
       - consego-v3-network
 
   audit-service:
+    image: consego-v3-audit:3.0
     build:
       context: ./audit-service
       dockerfile_inline: |
@@ -223,6 +227,7 @@ services:
       - consego-v3-network
 
   api-gateway:
+    image: consego-v3-gateway:3.0
     build:
       context: ./api-gateway
       dockerfile_inline: |
@@ -260,6 +265,7 @@ services:
       - consego-v3-network
 
   frontend:
+    image: consego-v3-frontend:3.0
     build:
       context: ./frontend
       dockerfile: Dockerfile
