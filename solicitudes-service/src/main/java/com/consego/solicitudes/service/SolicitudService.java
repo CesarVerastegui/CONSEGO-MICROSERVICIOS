@@ -76,7 +76,7 @@ public class SolicitudService {
                             .build(),
                     Solicitud.builder()
                             .plataforma("Microsoft Azure")
-                            .motivo("Revisar los logs en Azure Monitor porque se cayó una instancia durante la prueba")
+                            .motivo("Revisar los logs en Azure Monitor porque se cayo una instancia durante la prueba")
                             .estado("APROBADA")
                             .usuarioSolicitanteId(6L)
                             .fechaCreacion(LocalDateTime.now().minusDays(2))
@@ -87,7 +87,7 @@ public class SolicitudService {
                             .build(),
                     Solicitud.builder()
                             .plataforma("Oracle Autonomous DB")
-                            .motivo("Crear las tablas de prueba con el script SQL del profe para validar la migración")
+                            .motivo("Crear las tablas de prueba con el script SQL del profe para validar la migracion")
                             .estado("RECHAZADA")
                             .usuarioSolicitanteId(4L)
                             .fechaCreacion(LocalDateTime.now().minusDays(2))
@@ -97,7 +97,7 @@ public class SolicitudService {
                             .build(),
                     Solicitud.builder()
                             .plataforma("VPN Corporativa & Red Segura")
-                            .motivo("Acceso SSH a la máquina virtual para configurar RabbitMQ a mano")
+                            .motivo("Acceso SSH a la maquina virtual para configurar RabbitMQ a mano")
                             .estado("APROBADA")
                             .usuarioSolicitanteId(6L)
                             .fechaCreacion(LocalDateTime.now().minusDays(1))
