@@ -7,6 +7,7 @@ import com.consego.solicitudes.dto.UserResponse;
 import com.consego.solicitudes.model.Solicitud;
 import com.consego.solicitudes.repository.SolicitudRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,101 @@ public class SolicitudService {
     private final SolicitudRepository solicitudRepository;
     private final AuthClient authClient;
     private final RabbitTemplate rabbitTemplate;
+
+    @PostConstruct
+    public void seedSolicitudes() {
+        if (solicitudRepository.count() == 0) {
+            log.info("Sembrando solicitudes de prueba iniciales...");
+            List<Solicitud> iniciales = List.of(
+                    Solicitud.builder()
+                            .plataforma("Amazon Web Services (AWS)")
+                            .motivo("Subir el jar del backend a una instancia EC2 para probar que responda el gateway")
+                            .estado("APROBADA")
+                            .usuarioSolicitanteId(3L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(4))
+                            .comentarioResolucion("Aprobado para pruebas del sprint")
+                            .vigenciaDias(15)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(11))
+                            .detallesServicio(Map.of("recurso_rol", "Instancia EC2 Backend", "region_aws", "us-east-1 (N. Virginia)", "ambiente", "Desarrollo"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("GitHub Enterprise")
+                            .motivo("Permiso de escritura en el repo del microservicio auth para subir el fix del login")
+                            .estado("APROBADA")
+                            .usuarioSolicitanteId(4L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(3))
+                            .comentarioResolucion("Acceso concedido al repositorio")
+                            .vigenciaDias(30)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(27))
+                            .detallesServicio(Map.of("repositorio", "consego/auth-service", "nivel_permiso", "Escritura (Write)"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("VPN Corporativa & Red Segura")
+                            .motivo("Conectarme a la red del laboratorio desde mi casa para hacer pruebas con la base de datos")
+                            .estado("PENDIENTE")
+                            .usuarioSolicitanteId(5L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(1))
+                            .vigenciaDias(7)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(6))
+                            .detallesServicio(Map.of("ip_host", "10.200.4.15", "puerto_servicio", "MySQL 3306", "segmento_red", "Red Interna Corporativa"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("Google Cloud Platform (GCP)")
+                            .motivo("Probar el despliegue del contenedor en Cloud Run antes de la entrega")
+                            .estado("PENDIENTE")
+                            .usuarioSolicitanteId(3L)
+                            .fechaCreacion(LocalDateTime.now())
+                            .vigenciaDias(10)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(10))
+                            .detallesServicio(Map.of("detalle_recurso", "Google Cloud Run / Artifact Registry"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("Microsoft Azure")
+                            .motivo("Revisar los logs en Azure Monitor porque se cayó una instancia durante la prueba")
+                            .estado("APROBADA")
+                            .usuarioSolicitanteId(6L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(2))
+                            .comentarioResolucion("Revisado con el equipo de soporte")
+                            .vigenciaDias(5)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(3))
+                            .detallesServicio(Map.of("detalle_recurso", "Log Analytics Workspace"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("Oracle Autonomous DB")
+                            .motivo("Crear las tablas de prueba con el script SQL del profe para validar la migración")
+                            .estado("RECHAZADA")
+                            .usuarioSolicitanteId(4L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(2))
+                            .comentarioResolucion("Primero deben validar el script en MySQL local antes de tocar Oracle")
+                            .vigenciaDias(0)
+                            .detallesServicio(Map.of("esquema_bd", "BD_PRUEBAS_DSW2", "tipo_privilegio", "Escritura (DML)"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("VPN Corporativa & Red Segura")
+                            .motivo("Acceso SSH a la máquina virtual para configurar RabbitMQ a mano")
+                            .estado("APROBADA")
+                            .usuarioSolicitanteId(6L)
+                            .fechaCreacion(LocalDateTime.now().minusDays(1))
+                            .comentarioResolucion("Habilitado temporalmente por 48 horas")
+                            .vigenciaDias(2)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(1))
+                            .detallesServicio(Map.of("ip_host", "192.168.1.120", "puerto_servicio", "SSH 22", "segmento_red", "Zona DMZ Servidores"))
+                            .build(),
+                    Solicitud.builder()
+                            .plataforma("GitHub Enterprise")
+                            .motivo("Acceso al repo del frontend para hacer el merge de la rama v3.0")
+                            .estado("PENDIENTE")
+                            .usuarioSolicitanteId(5L)
+                            .fechaCreacion(LocalDateTime.now().minusHours(3))
+                            .vigenciaDias(14)
+                            .fechaCaducidad(LocalDateTime.now().plusDays(14))
+                            .detallesServicio(Map.of("repositorio", "consego/frontend-angular", "nivel_permiso", "Mantenimiento (Maintain)"))
+                            .build()
+            );
+            solicitudRepository.saveAll(iniciales);
+            log.info("Se sembraron {} solicitudes de prueba iniciales.", iniciales.size());
+        }
+    }
 
     @Transactional(readOnly = true)
     public List<Solicitud> listarTodas() {

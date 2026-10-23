@@ -72,8 +72,47 @@ public class AuthService {
                     .fechaAprobacion(LocalDateTime.now())
                     .build();
 
-            usuarioRepository.saveAll(List.of(admin, auditor, operador));
-            log.info("Cuentas iniciales institucionales sembradas en auth-service (admin, auditor, operador).");
+            Usuario cesar = Usuario.builder()
+                    .username("cverastegui")
+                    .correo("cverastegui@consego.com")
+                    .nombres("César")
+                    .apellidos("Verástegui")
+                    .password(passwordEncoder.encode("password123"))
+                    .rol("Solicitante")
+                    .activo(true)
+                    .estadoAdmision("APROBADA")
+                    .fechaRegistro(LocalDateTime.now())
+                    .fechaAprobacion(LocalDateTime.now())
+                    .build();
+
+            Usuario mathias = Usuario.builder()
+                    .username("mcastro")
+                    .correo("mcastro@consego.com")
+                    .nombres("Mathias")
+                    .apellidos("Castro")
+                    .password(passwordEncoder.encode("password123"))
+                    .rol("Solicitante")
+                    .activo(true)
+                    .estadoAdmision("APROBADA")
+                    .fechaRegistro(LocalDateTime.now())
+                    .fechaAprobacion(LocalDateTime.now())
+                    .build();
+
+            Usuario jorge = Usuario.builder()
+                    .username("jramos")
+                    .correo("jramos@consego.com")
+                    .nombres("Jorge")
+                    .apellidos("Ramos")
+                    .password(passwordEncoder.encode("password123"))
+                    .rol("Solicitante")
+                    .activo(true)
+                    .estadoAdmision("APROBADA")
+                    .fechaRegistro(LocalDateTime.now())
+                    .fechaAprobacion(LocalDateTime.now())
+                    .build();
+
+            usuarioRepository.saveAll(List.of(admin, auditor, operador, cesar, mathias, jorge));
+            log.info("Cuentas iniciales institucionales sembradas en auth-service.");
         }
     }
 
